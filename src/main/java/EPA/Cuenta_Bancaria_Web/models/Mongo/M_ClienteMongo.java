@@ -17,6 +17,9 @@ public class M_ClienteMongo
         this.nombre = nombre;
     }
 
+    public M_ClienteMongo() {
+    }
+
     public String getId() {
         return id;
     }
