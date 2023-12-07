@@ -21,7 +21,7 @@ public class ClienteRouter {
     }
 
     @Bean
-    public RouterFunction<ServerResponse> routerFunctionCuentas() {
+    public RouterFunction<ServerResponse> routerFunctionClientes() {
         return RouterFunctions.route()
                 .path("/Clientes", builder ->
                         builder

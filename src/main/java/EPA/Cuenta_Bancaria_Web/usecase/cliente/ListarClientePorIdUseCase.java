@@ -4,10 +4,12 @@ import EPA.Cuenta_Bancaria_Web.drivenAdapters.bus.RabbitMqPublisher;
 import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioClienteMongo;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cliente_DTO;
 import EPA.Cuenta_Bancaria_Web.utils.ClienteUtil;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.function.Function;
 
+@Service
 public class ListarClientePorIdUseCase implements Function<String, Mono<M_Cliente_DTO>> {
     private final I_RepositorioClienteMongo repositorio;
 

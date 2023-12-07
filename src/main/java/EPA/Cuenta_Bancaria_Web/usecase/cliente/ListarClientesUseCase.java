@@ -5,10 +5,12 @@ import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioClienteM
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cliente_DTO;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cuenta_DTO;
 import EPA.Cuenta_Bancaria_Web.utils.ClienteUtil;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
 import java.util.function.Supplier;
 
+@Service
 public class ListarClientesUseCase implements Supplier<Flux<M_Cliente_DTO>> {
 
     private final I_RepositorioClienteMongo repositorio;
