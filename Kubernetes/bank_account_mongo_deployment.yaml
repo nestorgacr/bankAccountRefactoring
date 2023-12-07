@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: bank-acount-mongo-deployment
+spec:
+  serviceName: mongodb-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-acount-api-mongo
+  template:
+    metadata:
+      labels:
+        app: bank-acount-api-mongo
+    spec:
+      containers:
+      - name: bank-acount-api-mongo
+        image: mongo:7.0.4
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongodb-data
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: mongodb-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi

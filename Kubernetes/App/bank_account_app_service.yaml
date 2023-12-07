@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bank-acount-service
+spec:
+  selector:
+    role: bank-acount-api
+  ports:
+    - name: app-port
+      port: 8086
+      targetPort: 8086
+      nodePort: 30000
+  type: LoadBalancer
+
+     

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-acount-rabbit-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bank-acount-rabbit
+  template:
+    metadata:
+      labels:
+        app: bank-acount-rabbit
+    spec:
+      containers:
+      - name: bank-acount-rabbit
+        image: rabbitmq:3-management
+        resources:
+          requests:  
+            memory: "1000M"
+          limits:
+            cpu: "1"
+            memory: "1000M"  
+        ports:
+        - containerPort: 5672
+        - containerPort: 15672
+        env:
+        - name: RABBITMQ_DEFAULT_USER
+          value: rabbit_user
+        - name: RABBITMQ_DEFAULT_PASS
+          value: b5x26z4p

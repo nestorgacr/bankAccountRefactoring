@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-acount-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: bank-acount-api
+  template:
+    metadata:
+      labels:
+        role: bank-acount-api
+    spec:
+      containers:
+      - name: bank-acount-api
+        image: nestorgacr/bank_account_app:1.0.3
+        ports:
+          - containerPort: 8086
