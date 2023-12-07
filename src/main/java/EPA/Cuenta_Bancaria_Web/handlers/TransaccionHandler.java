@@ -2,9 +2,13 @@ package EPA.Cuenta_Bancaria_Web.handlers;
 
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cuenta_DTO;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Transaccion_DTO;
+import EPA.Cuenta_Bancaria_Web.models.DTO.ProcesarTransaccionDto;
+import EPA.Cuenta_Bancaria_Web.models.DTO.TransaccionResponseDto;
 import EPA.Cuenta_Bancaria_Web.models.Enum_Tipos_Deposito;
-import EPA.Cuenta_Bancaria_Web.services.Transaccion.I_Transaccion;
-import org.springframework.beans.factory.annotation.Autowired;
+import EPA.Cuenta_Bancaria_Web.usecase.transaccion.BorrarTransaccionPorIdProcesoUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.transaccion.ListarTransaccionPorIdUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.transaccion.ListarTransaccionesUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.transaccion.ProcesarTransaccionUseCase;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -17,13 +21,36 @@ import java.math.BigDecimal;
 
 @Service
 public class TransaccionHandler {
-    @Autowired
-    I_Transaccion transaccion;
+    BorrarTransaccionPorIdProcesoUseCase borrarTransaccionPorIdProcesoUseCase;
+    ListarTransaccionesUseCase listarTransaccionesUseCase;
+    ProcesarTransaccionUseCase procesarTransaccionUseCase;
+    ListarTransaccionPorIdUseCase listarTransaccionPorIdUseCase;
+
+
+
+    public TransaccionHandler(BorrarTransaccionPorIdProcesoUseCase borrarTransaccionPorIdProcesoUseCase,
+                              ListarTransaccionesUseCase listarTransaccionesUseCase,
+                              ProcesarTransaccionUseCase procesarTransaccionUseCase,
+                              ListarTransaccionPorIdUseCase listarTransaccionPorIdUseCase) {
+        this.borrarTransaccionPorIdProcesoUseCase = borrarTransaccionPorIdProcesoUseCase;
+        this.listarTransaccionesUseCase = listarTransaccionesUseCase;
+        this.procesarTransaccionUseCase = procesarTransaccionUseCase;
+        this.listarTransaccionPorIdUseCase = listarTransaccionPorIdUseCase;
+    }
 
     public Mono<ServerResponse> listar_transacciones(ServerRequest request)
     {
 
-        Flux<M_Transaccion_DTO> cuentas = transaccion.findAll();
+        Flux<M_Transaccion_DTO> cuentas = listarTransaccionesUseCase.get();
+        return ServerResponse.ok()
+                .contentType(MediaType.TEXT_EVENT_STREAM)
+                .body(cuentas, M_Cuenta_DTO.class);
+    }
+
+    public Mono<ServerResponse> listar_transaccionesPorId(ServerRequest request)
+    {
+
+        Mono<TransaccionResponseDto> cuentas = listarTransaccionPorIdUseCase.apply(request.pathVariable("id"));
         return ServerResponse.ok()
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(cuentas, M_Cuenta_DTO.class);
@@ -35,8 +62,8 @@ public class TransaccionHandler {
         String id_Cuenta = request.pathVariable("id_Cuenta");
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
-
-        Mono<M_Transaccion_DTO> transaccionLocal =  transaccion.Procesar_Deposito(id_Cuenta, Enum_Tipos_Deposito.CAJERO, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.CAJERO, monto);
+        Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
         return ServerResponse.ok()
                 .body(transaccionLocal, M_Cuenta_DTO.class);
     }
@@ -49,7 +76,8 @@ public class TransaccionHandler {
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
 
-        Mono<M_Transaccion_DTO> transaccionLocal =  transaccion.Procesar_Deposito(id_Cuenta, Enum_Tipos_Deposito.SUCURSAL, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.SUCURSAL, monto);
+        Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
         return ServerResponse.ok()
                 .body(transaccionLocal, M_Cuenta_DTO.class);
     }
@@ -61,7 +89,9 @@ public class TransaccionHandler {
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
 
-        Mono<M_Transaccion_DTO> transaccionLocal =  transaccion.Procesar_Deposito(id_Cuenta, Enum_Tipos_Deposito.OTRA_CUENTA, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.OTRA_CUENTA, monto);
+        Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
+
         return ServerResponse.ok()
                 .body(transaccionLocal, M_Cuenta_DTO.class);
     }

@@ -1,8 +1,9 @@
 package EPA.Cuenta_Bancaria_Web.handlers;
 
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cuenta_DTO;
-import EPA.Cuenta_Bancaria_Web.services.Cuenta.I_Cuenta;
-import org.springframework.beans.factory.annotation.Autowired;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.CrearCuentaUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.ListarCuentaPorIdUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.ListarCuentasUseCase;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -12,12 +13,22 @@ import reactor.core.publisher.Mono;
 
 @Service
 public class CuentaHandler {
-    @Autowired
-    I_Cuenta cuenta;
+
+
+    private final ListarCuentasUseCase listarCuentasUseCase;
+    private final ListarCuentaPorIdUseCase listarCuentaPorIdUseCase;
+
+    private final CrearCuentaUseCase crearCuentaUseCase;
+
+    public CuentaHandler(ListarCuentasUseCase listarCuentasUseCase, ListarCuentaPorIdUseCase listarCuentaPorIdUseCase, CrearCuentaUseCase crearCuentaUseCase) {
+        this.listarCuentasUseCase = listarCuentasUseCase;
+        this.listarCuentaPorIdUseCase = listarCuentaPorIdUseCase;
+        this.crearCuentaUseCase = crearCuentaUseCase;
+    }
 
     public Mono<ServerResponse> listar_cuentas(ServerRequest request)
     {
-        Flux<M_Cuenta_DTO> cuentas = cuenta.findAll();
+        Flux<M_Cuenta_DTO> cuentas = listarCuentasUseCase.get();
         return ServerResponse.ok()
                 .contentType(MediaType.TEXT_EVENT_STREAM)
                 .body(cuentas, M_Cuenta_DTO.class);
@@ -25,7 +36,7 @@ public class CuentaHandler {
 
     public Mono<ServerResponse> listarCuenta(ServerRequest request)
     {
-        Mono<M_Cuenta_DTO> cuentaLocal = cuenta.findById(request.pathVariable("id"));
+        Mono<M_Cuenta_DTO> cuentaLocal = listarCuentaPorIdUseCase.apply(request.pathVariable("id"));
         return ServerResponse.ok()
                 .body(cuentaLocal, M_Cuenta_DTO.class);
     }
@@ -33,7 +44,7 @@ public class CuentaHandler {
     public Mono<ServerResponse> Crear_Cuenta(ServerRequest request)
     {
         Mono<M_Cuenta_DTO> mCuentaDtoMono = request.bodyToMono(M_Cuenta_DTO.class);
-        Mono<M_Cuenta_DTO> cuentaLocal = cuenta.crear_Cuenta(mCuentaDtoMono.block());
+        Mono<M_Cuenta_DTO> cuentaLocal = crearCuentaUseCase.apply(mCuentaDtoMono.block());
         return ServerResponse.ok()
                 .body(cuentaLocal, M_Cuenta_DTO.class);
     }
