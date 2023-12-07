@@ -32,7 +32,7 @@ public class RabbitConfig {
     public static final String ROUTING_KEY_NAME = "transactions.routing.key";
     public static final String ROUTING_CLOUD_WATCH_KEY_NAME = "transactions.routing.cloud_watch.key";
     public static final String ROUTING_ERROR_KEY_NAME = "transactions.routing.error.key";
-    public static final String URI_NAME = "amqps://bwdcvvft:vPvMOIurqaewCG26Ny76PEendBtfaYSK@cow.rmq2.cloudamqp.com/bwdcvvft";
+    public static final String URI_NAME = "amqp://rabbit_user:b5x26z4p@192.168.65.3:30002";
 
 
     @Bean

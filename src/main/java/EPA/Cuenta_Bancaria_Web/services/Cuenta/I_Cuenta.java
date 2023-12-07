@@ -12,5 +12,7 @@ public interface I_Cuenta
 
     Flux<M_Cuenta_DTO> findAll();
 
+    Mono<M_Cuenta_DTO> findById(String id);
+
     Mono<Void> Actualizar_Saldo(String id_Cuenta, BigDecimal monto);
 }

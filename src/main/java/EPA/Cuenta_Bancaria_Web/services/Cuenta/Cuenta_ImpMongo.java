@@ -15,8 +15,7 @@ import reactor.core.publisher.Mono;
 import java.math.BigDecimal;
 
 
-@Service()
-@Qualifier("MONGO")
+@Service
 public class Cuenta_ImpMongo implements I_Cuenta
 {
     @Autowired
@@ -54,6 +53,16 @@ public class Cuenta_ImpMongo implements I_Cuenta
     {
         eventBus.publishCloudWatchMessage("Inicia creación de findAll cuentas");
         return repositorio_Cuenta.findAll()
+                .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
+                        new M_Cliente_DTO(cuentaModel.getCliente().getId(),
+                                cuentaModel.getCliente().getNombre()),
+                        cuentaModel.getSaldo_Global()));
+    }
+
+    @Override
+    public Mono<M_Cuenta_DTO> findById(String id) {
+        eventBus.publishCloudWatchMessage("Inicia creación de findById cuenta");
+        return repositorio_Cuenta.findById(id)
                 .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
                         new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                 cuentaModel.getCliente().getNombre()),

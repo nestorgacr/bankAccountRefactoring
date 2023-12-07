@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Data
 public class M_Cuenta_DTO
@@ -31,6 +32,9 @@ public class M_Cuenta_DTO
         this.saldo_Global = saldo_Global;
     }
 
+    public M_Cuenta_DTO() {
+    }
+
     @Override
     public String toString() {
         return "M_Cuenta_DTO{" +
@@ -38,5 +42,18 @@ public class M_Cuenta_DTO
                 ", cliente=" + cliente +
                 ", saldo_Global=" + saldo_Global +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        M_Cuenta_DTO that = (M_Cuenta_DTO) o;
+        return Objects.equals(id, that.id) && Objects.equals(cliente, that.cliente) && Objects.equals(saldo_Global, that.saldo_Global);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, cliente, saldo_Global);
     }
 }
