@@ -2,7 +2,7 @@ package EPA.Cuenta_Bancaria_Web.usecase.transaccion;
 
 
 import EPA.Cuenta_Bancaria_Web.drivenAdapters.bus.RabbitMqPublisher;
-import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_Repositorio_TransaccionMongo;
+import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioTransaccionMongo;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cliente_DTO;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cuenta_DTO;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Transaccion_DTO;
@@ -14,12 +14,12 @@ import java.util.function.Supplier;
 @Service
 public class ListarTransaccionesUseCase implements Supplier<Flux<M_Transaccion_DTO>> {
 
-    private final I_Repositorio_TransaccionMongo repositorio;
+    private final I_RepositorioTransaccionMongo repositorio;
 
 
     private final RabbitMqPublisher eventBus;
 
-    public ListarTransaccionesUseCase(I_Repositorio_TransaccionMongo repositorio, RabbitMqPublisher eventBus) {
+    public ListarTransaccionesUseCase(I_RepositorioTransaccionMongo repositorio, RabbitMqPublisher eventBus) {
         this.repositorio = repositorio;
         this.eventBus = eventBus;
     }

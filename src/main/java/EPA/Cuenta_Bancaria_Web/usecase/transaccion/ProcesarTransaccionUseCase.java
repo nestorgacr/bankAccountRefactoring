@@ -2,7 +2,7 @@ package EPA.Cuenta_Bancaria_Web.usecase.transaccion;
 
 import EPA.Cuenta_Bancaria_Web.drivenAdapters.bus.RabbitMqPublisher;
 import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioCuentaMongo;
-import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_Repositorio_TransaccionMongo;
+import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioTransaccionMongo;
 import EPA.Cuenta_Bancaria_Web.models.DTO.*;
 import EPA.Cuenta_Bancaria_Web.models.Mongo.M_TransaccionMongo;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Service
 public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionDto, Mono<M_Transaccion_DTO>> {
 
-    private final I_Repositorio_TransaccionMongo repositorio;
+    private final I_RepositorioTransaccionMongo repositorio;
     private final I_RepositorioCuentaMongo repositorioCuenta;
     private final Environment environment;
 
@@ -45,7 +45,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
 
     private final RabbitMqPublisher eventBus;
 
-    public ProcesarTransaccionUseCase(I_Repositorio_TransaccionMongo repositorio,
+    public ProcesarTransaccionUseCase(I_RepositorioTransaccionMongo repositorio,
                                       I_RepositorioCuentaMongo repositorioCuenta,
                                       Environment environment, RabbitMqPublisher eventBus) {
         this.repositorio = repositorio;

@@ -14,8 +14,6 @@ import java.util.function.Supplier;
 public class ListarClientesUseCase implements Supplier<Flux<M_Cliente_DTO>> {
 
     private final I_RepositorioClienteMongo repositorio;
-
-
     private final RabbitMqPublisher eventBus;
 
 

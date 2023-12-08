@@ -1,13 +1,18 @@
 package EPA.Cuenta_Bancaria_Web.routes;
 
 import EPA.Cuenta_Bancaria_Web.handlers.ClienteHandler;
+import EPA.Cuenta_Bancaria_Web.handlers.CuentaHandler;
 import EPA.Cuenta_Bancaria_Web.models.DTO.M_Cliente_DTO;
 import EPA.Cuenta_Bancaria_Web.usecase.cliente.CrearClienteUseCase;
 import EPA.Cuenta_Bancaria_Web.usecase.cliente.ListarClientePorIdUseCase;
 import EPA.Cuenta_Bancaria_Web.usecase.cliente.ListarClientesUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.CrearCuentaUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.ListarCuentaPorIdUseCase;
+import EPA.Cuenta_Bancaria_Web.usecase.cuentas.ListarCuentasUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
@@ -27,31 +32,31 @@ public class ClientRoutesTest {
 
     private WebTestClient webTestClient;
 
-    @MockBean
+    @Mock
     private ListarClientePorIdUseCase listarClientePorIdUseCase;
 
-    @MockBean
+    @Mock
     private ListarClientesUseCase listarClientesUseCase;
 
-    @MockBean
+    @Mock
     private CrearClienteUseCase crearClienteUseCase;
+
+    private ClienteHandler clienteHandler;
+
+    private ClienteRouter clienteRouter;
 
     @BeforeEach
     void setUp(){
+        clienteHandler = new ClienteHandler(  listarClientePorIdUseCase, listarClientesUseCase,  crearClienteUseCase);
 
-        listarClientePorIdUseCase = Mockito.mock(ListarClientePorIdUseCase.class);
+        clienteRouter = new ClienteRouter(clienteHandler);
 
-        listarClientesUseCase = Mockito.mock(ListarClientesUseCase.class);
-
-        crearClienteUseCase = Mockito.mock(CrearClienteUseCase.class);
-
-
-        webTestClient = WebTestClient.bindToRouterFunction(new ClienteRouter(new ClienteHandler(listarClientePorIdUseCase, listarClientesUseCase, crearClienteUseCase)).routerFunctionClientes())
+        webTestClient = WebTestClient.bindToRouterFunction(clienteRouter.routerFunctionClientes())
                 .build();
     }
 
     @Test
-    @DisplayName("Listar clientes")
+    @DisplayName("Routes -> Listar clientes")
     void listarClientes() {
         when(listarClientesUseCase.get()).thenReturn(Flux.just(new M_Cliente_DTO("1", "Cliente1")));
 
@@ -66,7 +71,7 @@ public class ClientRoutesTest {
     }
 
     @Test
-    @DisplayName("Listar clientes con error, No debe contener el cliente con ID 2")
+    @DisplayName("Routes -> Listar clientes con error, No debe contener el cliente con ID 2")
     void listarClientesWithError() {
         when(listarClientesUseCase.get()).thenReturn(Flux.just(new M_Cliente_DTO("1", "Cliente1")));
 
@@ -81,7 +86,7 @@ public class ClientRoutesTest {
     }
 
     @Test
-    @DisplayName("Listar cliente por id")
+    @DisplayName("Routes -> Listar cliente por id")
     void listarClientePorId() {
         when(listarClientePorIdUseCase.apply("1")).thenReturn(Mono.just(new M_Cliente_DTO("1", "Cliente1")));
 
@@ -96,7 +101,7 @@ public class ClientRoutesTest {
     }
 
     @Test
-    @DisplayName("Listar cliente por id, con error")
+    @DisplayName("Routes -> Listar cliente por id, con error")
     void listarClientePorIdWithError() {
         when(listarClientePorIdUseCase.apply("1")).thenReturn(Mono.just(new M_Cliente_DTO("1", "Cliente1")));
 
@@ -113,7 +118,7 @@ public class ClientRoutesTest {
     }
 
     @Test
-    @DisplayName("Crear cliente")
+    @DisplayName("Routes -> Crear cliente")
     void CrearCliente() {
         M_Cliente_DTO clienteDTO = new M_Cliente_DTO("1", "Cliente1");
 
@@ -121,8 +126,9 @@ public class ClientRoutesTest {
                 .thenReturn(Mono.just(clienteDTO));
 
 
-        webTestClient.get()
+        webTestClient.post()
                 .uri("/Clientes/Crear")
+                .bodyValue(clienteDTO)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(M_Cliente_DTO.class)

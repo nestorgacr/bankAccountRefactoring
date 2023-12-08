@@ -15,6 +15,7 @@ import EPA.Cuenta_Bancaria_Web.usecase.cuentas.ListarCuentasUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,34 +34,34 @@ public class CuentaRoutesTest {
 
     private WebTestClient webTestClient;
 
-
-
-    @MockBean
+    @Mock
     private CrearCuentaUseCase crearCuentaUseCase;
 
-    @MockBean
+    @Mock
     private ListarCuentasUseCase listarCuentasUseCase;
 
-    @MockBean
+    @Mock
     private ListarCuentaPorIdUseCase listarCuentaPorIdUseCase;
+
+    private CuentaHandler cuentaHandler;
+
+    private CuentaRouter cuentaRouter;
 
     @BeforeEach
     void setUp(){
 
-        crearCuentaUseCase = Mockito.mock(CrearCuentaUseCase.class);
+        cuentaHandler = new CuentaHandler(  listarCuentasUseCase, listarCuentaPorIdUseCase,  crearCuentaUseCase);
 
-        listarCuentasUseCase = Mockito.mock(ListarCuentasUseCase.class);
+        cuentaRouter = new CuentaRouter(cuentaHandler);
 
-        listarCuentaPorIdUseCase = Mockito.mock(ListarCuentaPorIdUseCase.class);
-
-        webTestClient = WebTestClient.bindToRouterFunction(
-                new CuentaRouter(
-                        new CuentaHandler(listarCuentasUseCase, listarCuentaPorIdUseCase, crearCuentaUseCase)).routerFunctionCuentas())
+        webTestClient = WebTestClient.bindToRouterFunction(cuentaRouter.routerFunctionCuentas())
                 .build();
+
+
     }
 
     @Test
-    @DisplayName("Listar cuentas")
+    @DisplayName("Routes -> Listar cuentas")
     void listarCuentas() {
 
         M_Cuenta_DTO cuenta = new M_Cuenta_DTO();
@@ -81,7 +82,7 @@ public class CuentaRoutesTest {
     }
 
     @Test
-    @DisplayName("Listar cuentas, con error")
+    @DisplayName("Routes -> Listar cuentas, con error")
     void listarCuentasWithError() {
 
         M_Cuenta_DTO cuenta = new M_Cuenta_DTO();
@@ -108,7 +109,7 @@ public class CuentaRoutesTest {
 
 
     @Test
-    @DisplayName("Listar cuenta por id")
+    @DisplayName("Routes -> Listar cuenta por id")
     void listarCuentasPorId() {
 
         M_Cuenta_DTO cuenta = new M_Cuenta_DTO();
@@ -129,7 +130,7 @@ public class CuentaRoutesTest {
     }
 
     @Test
-    @DisplayName("Listar cuenta por id, con error")
+    @DisplayName("Routes -> Listar cuenta por id, con error")
     void listarCuentasPorIdWithError() {
 
         M_Cuenta_DTO cuenta = new M_Cuenta_DTO();
@@ -153,6 +154,26 @@ public class CuentaRoutesTest {
                     assertNotEquals(cuentaResult, cuentaDto);
                 });
 
+
+    }
+    @Test
+    @DisplayName("Routes -> Crear cuenta")
+    void CrearCliente() {
+        M_Cuenta_DTO cuenta = new M_Cuenta_DTO();
+        cuenta.setSaldo_Global(BigDecimal.valueOf(1000));
+        cuenta.setCliente( new M_Cliente_DTO("1", "Test"));
+        cuenta.setId("1");
+
+        when(crearCuentaUseCase.apply(cuenta))
+                .thenReturn(Mono.just(cuenta));
+
+        webTestClient.post()
+                .uri("/Cuentas/Crear")
+                .bodyValue(cuenta)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(M_Cuenta_DTO.class)
+                .isEqualTo(cuenta);
 
     }
 
