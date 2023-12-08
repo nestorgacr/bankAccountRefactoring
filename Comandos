@@ -3,3 +3,13 @@ docker push nestorgacr/bank_account_app:1.0.3
 
 
 netstat -ntl | grep 192.168.65.3
+
+
+
+
+docker build -t nestorgacr/bank_account_service:latest .
+docker push nestorgacr/bank_account_service:latest
+
+
+docker build -t nestorgacr/bank_account_app:latest .
+docker push nestorgacr/bank_account_app:latest
