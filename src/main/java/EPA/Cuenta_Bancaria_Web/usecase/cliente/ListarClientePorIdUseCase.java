@@ -24,7 +24,7 @@ public class ListarClientePorIdUseCase implements Function<String, Mono<M_Client
 
     @Override
     public Mono<M_Cliente_DTO> apply(String id) {
-        eventBus.publishCloudWatchMessage("se busca el cliente con el id:" + id);
+        eventBus.publishCloudWatchMessage("se busca cliente", id);
         return repositorio.findById(id).map(ClienteUtil::entityToDto);
     }
 }

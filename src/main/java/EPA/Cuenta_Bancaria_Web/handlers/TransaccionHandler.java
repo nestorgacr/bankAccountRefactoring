@@ -41,28 +41,27 @@ public class TransaccionHandler {
     public Mono<ServerResponse> listar_transacciones(ServerRequest request)
     {
 
-        Flux<M_Transaccion_DTO> cuentas = listarTransaccionesUseCase.get();
+        Flux<M_Transaccion_DTO> transacciones = listarTransaccionesUseCase.get();
         return ServerResponse.ok()
                 .contentType(MediaType.TEXT_EVENT_STREAM)
-                .body(cuentas, M_Cuenta_DTO.class);
+                .body(transacciones, M_Cuenta_DTO.class);
     }
 
     public Mono<ServerResponse> listar_transaccionesPorId(ServerRequest request)
     {
 
-        Mono<TransaccionResponseDto> cuentas = listarTransaccionPorIdUseCase.apply(request.pathVariable("id"));
+        Mono<TransaccionResponseDto> transaccion = listarTransaccionPorIdUseCase.apply(request.pathVariable("id"));
         return ServerResponse.ok()
-                .contentType(MediaType.TEXT_EVENT_STREAM)
-                .body(cuentas, M_Cuenta_DTO.class);
+                .body(transaccion, M_Cuenta_DTO.class);
     }
 
 
     public Mono<ServerResponse> Procesar_Deposito_Cajero(ServerRequest request)
     {
-        String id_Cuenta = request.pathVariable("id_Cuenta");
+        String id_Tran = request.pathVariable("id_Cuenta");
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
-        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.CAJERO, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Tran,Enum_Tipos_Deposito.CAJERO, monto);
         Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
         return ServerResponse.ok()
                 .body(transaccionLocal, M_Cuenta_DTO.class);
@@ -72,11 +71,11 @@ public class TransaccionHandler {
     public Mono<ServerResponse> Procesar_Deposito_Sucursal(ServerRequest request)
     {
 
-        String id_Cuenta = request.pathVariable("id_Cuenta");
+        String id_Tran = request.pathVariable("id_Cuenta");
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
 
-        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.SUCURSAL, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Tran,Enum_Tipos_Deposito.SUCURSAL, monto);
         Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
         return ServerResponse.ok()
                 .body(transaccionLocal, M_Cuenta_DTO.class);
@@ -85,11 +84,11 @@ public class TransaccionHandler {
 
     public Mono<ServerResponse> Procesar_Deposito_OtraCuenta(ServerRequest request)
     {
-        String id_Cuenta = request.pathVariable("id_Cuenta");
+        String id_Tran = request.pathVariable("id_Cuenta");
         String sMonto = request.pathVariable("monto");
         BigDecimal monto = new BigDecimal(sMonto);
 
-        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Cuenta,Enum_Tipos_Deposito.OTRA_CUENTA, monto);
+        ProcesarTransaccionDto tran = new ProcesarTransaccionDto(id_Tran,Enum_Tipos_Deposito.OTRA_CUENTA, monto);
         Mono<M_Transaccion_DTO> transaccionLocal =  procesarTransaccionUseCase.apply(tran);
 
         return ServerResponse.ok()

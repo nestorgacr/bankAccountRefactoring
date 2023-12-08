@@ -46,10 +46,13 @@ public class ClienteHandler {
 
     public Mono<ServerResponse> crearCliente(ServerRequest request)
     {
-        Mono<M_Cliente_DTO> mClienteDtoMono = request.bodyToMono(M_Cliente_DTO.class);
-        Mono<M_Cliente_DTO> cuentaLocal = crearClienteUseCase.apply(mClienteDtoMono.block());
-        return ServerResponse.ok()
-                .body(cuentaLocal, M_Cliente_DTO.class);
+        return request.bodyToMono(M_Cliente_DTO.class).flatMap(
+                cliente -> {
+                    Mono<M_Cliente_DTO>  temp =  crearClienteUseCase.apply(cliente);
+                    return ServerResponse.ok()
+                            .body(temp, M_Cuenta_DTO.class);
+                }
+        );
     }
 
 

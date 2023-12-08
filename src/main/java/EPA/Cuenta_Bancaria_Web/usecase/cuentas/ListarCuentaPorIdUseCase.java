@@ -24,7 +24,7 @@ public class ListarCuentaPorIdUseCase implements Function<String, Mono<M_Cuenta_
     }
     @Override
     public Mono<M_Cuenta_DTO> apply(String id) {
-        eventBus.publishCloudWatchMessage("Inicia creación de findById cuenta");
+        eventBus.publishCloudWatchMessage("Se busca la cuenta", id);
         return repositorio_Cuenta.findById(id)
                 .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
                         new M_Cliente_DTO(cuentaModel.getCliente().getId(),

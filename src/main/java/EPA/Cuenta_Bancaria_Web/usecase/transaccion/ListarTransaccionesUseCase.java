@@ -27,7 +27,7 @@ public class ListarTransaccionesUseCase implements Supplier<Flux<M_Transaccion_D
 
     @Override
     public Flux<M_Transaccion_DTO> get() {
-        eventBus.publishCloudWatchMessage("Inicia transacción findAll");
+        eventBus.publishCloudWatchMessage("Inicia transacción findAll", "");
         return repositorio.findAll()
                 .map(transaccion -> {
                     return new M_Transaccion_DTO(transaccion.getId(),

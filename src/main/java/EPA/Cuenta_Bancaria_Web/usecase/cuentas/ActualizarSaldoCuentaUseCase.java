@@ -25,7 +25,7 @@ public class ActualizarSaldoCuentaUseCase implements Function<ActualizarSaldoDto
 
     @Override
     public Mono<Void> apply(ActualizarSaldoDto actualizarSaldoDto) {
-        eventBus.publishCloudWatchMessage("Se actualiza saldo de cuenta:" + actualizarSaldoDto.getId_Cuenta().toString() + ", monto:" + actualizarSaldoDto.getMonto().toString());
+        eventBus.publishCloudWatchMessage("Se actualiza saldo de cuenta", actualizarSaldoDto);
 
         return repositorio_Cuenta.findById(actualizarSaldoDto.getId_Cuenta())
                 .flatMap(cuenta -> {

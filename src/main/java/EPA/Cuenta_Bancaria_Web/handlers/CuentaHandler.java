@@ -43,8 +43,6 @@ public class CuentaHandler {
 
     public Mono<ServerResponse> Crear_Cuenta(ServerRequest request)
     {
-
-
         return request.bodyToMono(M_Cuenta_DTO.class).flatMap(
                 cuenta -> {
                     Mono<M_Cuenta_DTO>  temp =  crearCuentaUseCase.apply(cuenta);

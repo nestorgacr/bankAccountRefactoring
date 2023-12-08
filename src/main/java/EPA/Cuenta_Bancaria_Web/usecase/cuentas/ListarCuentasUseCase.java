@@ -26,7 +26,7 @@ public class ListarCuentasUseCase implements Supplier<Flux<M_Cuenta_DTO>> {
 
     @Override
     public Flux<M_Cuenta_DTO> get() {
-        eventBus.publishCloudWatchMessage("Inicia creación de findAll cuentas");
+        eventBus.publishCloudWatchMessage("Inicia creación de findAll cuentas", "");
         return repositorio_Cuenta.findAll()
                 .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
                         new M_Cliente_DTO(cuentaModel.getCliente().getId(),

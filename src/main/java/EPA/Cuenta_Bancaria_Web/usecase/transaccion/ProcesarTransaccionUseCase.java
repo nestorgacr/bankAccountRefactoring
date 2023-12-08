@@ -60,7 +60,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
 
 
 
-        double costoCajero = Double.parseDouble(costoCajeroStr);
+        double costoCajero = Double.parseDouble(this.costoCajeroStr);
         double costoSucursal = Double.parseDouble(costoSucursalStr);
         double costoOtraCuenta = Double.parseDouble(costoOtraCuentaStr);
 
@@ -70,7 +70,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
         double costoRetiro = Double.parseDouble(costoRetiroStr);
 
 
-        eventBus.publishCloudWatchMessage("Inicia creación de transaccion");
+        eventBus.publishCloudWatchMessage("Inicia creación de transaccion", procesarTransaccionDto);
 
         return repositorioCuenta.findById(procesarTransaccionDto.getId_Cuenta())
                 .flatMap(cuenta -> {
@@ -119,7 +119,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
 
                                 errorSend.setTransaccion(mTran);
 
-                                eventBus.publishErrorMessage(errorSend);
+                                eventBus.publishErrorMessage("Error al procesar transaccion",errorSend);
 
 
                                 return Mono.empty();
@@ -127,7 +127,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
                             .subscribe();
                     return repositorio.save(transaccion);
                 }).map(transactionModel -> {
-                    eventBus.publishCloudWatchMessage("Finaliza creación de transaccion");
+                    eventBus.publishCloudWatchMessage("Finaliza creación de transaccion", transactionModel);
                     return new M_Transaccion_DTO(transactionModel.getId(),
                             new M_Cuenta_DTO(transactionModel.getCuenta().getId(),
                                     new M_Cliente_DTO(transactionModel.getCuenta().getCliente().getId(),

@@ -25,7 +25,7 @@ public class TransaccionRouter {
                 .path("/Transacciones", builder ->
                         builder
                                 .GET("/listar", handler::listar_transacciones)
-                                .GET("/listarPorId", handler::listar_transaccionesPorId)
+                                .GET("/listar/{id}", handler::listar_transaccionesPorId)
                                 .POST("/Crear/Deposito/Cajero/{id_Cuenta}/{monto}", handler::Procesar_Deposito_Cajero)
                                 .POST("/Crear/Deposito/Sucursal/{id_Cuenta}/{monto}", handler::Procesar_Deposito_Sucursal)
                                 .POST("/Crear/Deposito/OtraCuenta/{id_Cuenta}/{monto}", handler::Procesar_Deposito_OtraCuenta)

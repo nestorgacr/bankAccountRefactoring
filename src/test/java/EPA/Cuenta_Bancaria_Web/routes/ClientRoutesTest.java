@@ -38,6 +38,14 @@ public class ClientRoutesTest {
 
     @BeforeEach
     void setUp(){
+
+        listarClientePorIdUseCase = Mockito.mock(ListarClientePorIdUseCase.class);
+
+        listarClientesUseCase = Mockito.mock(ListarClientesUseCase.class);
+
+        crearClienteUseCase = Mockito.mock(CrearClienteUseCase.class);
+
+
         webTestClient = WebTestClient.bindToRouterFunction(new ClienteRouter(new ClienteHandler(listarClientePorIdUseCase, listarClientesUseCase, crearClienteUseCase)).routerFunctionClientes())
                 .build();
     }
@@ -109,8 +117,8 @@ public class ClientRoutesTest {
     void CrearCliente() {
         M_Cliente_DTO clienteDTO = new M_Cliente_DTO("1", "Cliente1");
 
-        when(crearClienteUseCase.apply(clienteDTO)
-                .thenReturn(Mono.just(clienteDTO)));
+        when(crearClienteUseCase.apply(clienteDTO))
+                .thenReturn(Mono.just(clienteDTO));
 
 
         webTestClient.get()

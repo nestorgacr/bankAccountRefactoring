@@ -26,18 +26,15 @@ public class CrearCuentaUseCase implements Function<M_Cuenta_DTO, Mono<M_Cuenta_
 
     @Override
     public Mono<M_Cuenta_DTO> apply(M_Cuenta_DTO p_Cuenta_DTO) {
-        eventBus.publishCloudWatchMessage("Inicia creación de cuenta");
+        eventBus.publishCloudWatchMessage("Inicia creación de cuenta", p_Cuenta_DTO);
         M_CuentaMongo cuenta = new M_CuentaMongo(p_Cuenta_DTO.getId(),
                 new M_ClienteMongo(p_Cuenta_DTO.getCliente().getId(),
                         p_Cuenta_DTO.getCliente().getNombre()),
                 p_Cuenta_DTO.getSaldo_Global());
 
-
-        eventBus.publishMessage(cuenta);
-
         return repositorio_Cuenta.save(cuenta)
                 .map(cuentaModel-> {
-                    eventBus.publishCloudWatchMessage("Finaliza creación de cuenta");
+                    eventBus.publishCloudWatchMessage("Finaliza creación de cuenta", cuentaModel);
                     return new M_Cuenta_DTO(cuentaModel.getId(),
                             new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                     cuentaModel.getCliente().getNombre()),
