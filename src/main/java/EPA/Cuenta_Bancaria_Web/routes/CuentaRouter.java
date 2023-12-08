@@ -26,7 +26,7 @@ public class CuentaRouter {
                         builder
                                 .GET("/listar", handler::listar_cuentas)
                                 .GET("/listar/{id}", handler::listarCuenta)
-                                //.POST("/Crear", handler::Crear_Cuenta)
+                                .POST("/Crear", handler::Crear_Cuenta)
                 )
                 .build();
     }

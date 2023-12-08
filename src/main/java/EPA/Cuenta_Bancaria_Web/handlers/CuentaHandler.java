@@ -43,10 +43,16 @@ public class CuentaHandler {
 
     public Mono<ServerResponse> Crear_Cuenta(ServerRequest request)
     {
-        Mono<M_Cuenta_DTO> mCuentaDtoMono = request.bodyToMono(M_Cuenta_DTO.class);
-        Mono<M_Cuenta_DTO> cuentaLocal = crearCuentaUseCase.apply(mCuentaDtoMono.block());
-        return ServerResponse.ok()
-                .body(cuentaLocal, M_Cuenta_DTO.class);
+
+
+        return request.bodyToMono(M_Cuenta_DTO.class).flatMap(
+                cuenta -> {
+                    Mono<M_Cuenta_DTO>  temp =  crearCuentaUseCase.apply(cuenta);
+                    return ServerResponse.ok()
+                   .body(temp, M_Cuenta_DTO.class);
+                }
+        );
+
     }
 
 

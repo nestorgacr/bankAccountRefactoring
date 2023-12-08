@@ -34,14 +34,14 @@ public class ClienteHandler {
         Flux<M_Cliente_DTO> cuentas = listarClientesUseCase.get();
         return ServerResponse.ok()
                 .contentType(MediaType.TEXT_EVENT_STREAM)
-                .body(cuentas, M_Cuenta_DTO.class);
+                .body(cuentas, M_Cliente_DTO.class);
     }
 
     public Mono<ServerResponse> listarCliente(ServerRequest request)
     {
         Mono<M_Cliente_DTO> cuentaLocal = listarClientePorIdUseCase.apply(request.pathVariable("id"));
         return ServerResponse.ok()
-                .body(cuentaLocal, M_Cuenta_DTO.class);
+                .body(cuentaLocal, M_Cliente_DTO.class);
     }
 
     public Mono<ServerResponse> crearCliente(ServerRequest request)
@@ -49,7 +49,7 @@ public class ClienteHandler {
         Mono<M_Cliente_DTO> mClienteDtoMono = request.bodyToMono(M_Cliente_DTO.class);
         Mono<M_Cliente_DTO> cuentaLocal = crearClienteUseCase.apply(mClienteDtoMono.block());
         return ServerResponse.ok()
-                .body(cuentaLocal, M_Cuenta_DTO.class);
+                .body(cuentaLocal, M_Cliente_DTO.class);
     }
 
 

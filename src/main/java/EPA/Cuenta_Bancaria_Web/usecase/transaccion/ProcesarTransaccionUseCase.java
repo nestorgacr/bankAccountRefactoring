@@ -5,6 +5,7 @@ import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_RepositorioCuentaMo
 import EPA.Cuenta_Bancaria_Web.drivenAdapters.repositorios.I_Repositorio_TransaccionMongo;
 import EPA.Cuenta_Bancaria_Web.models.DTO.*;
 import EPA.Cuenta_Bancaria_Web.models.Mongo.M_TransaccionMongo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -18,15 +19,35 @@ import java.util.function.Function;
 public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionDto, Mono<M_Transaccion_DTO>> {
 
     private final I_Repositorio_TransaccionMongo repositorio;
-
     private final I_RepositorioCuentaMongo repositorioCuenta;
-
     private final Environment environment;
+
+    @Value("${EPA.Deposito.Cajero}")
+    String costoCajeroStr;
+
+    @Value("${EPA.Deposito.Sucursal}")
+    String costoSucursalStr;
+
+    @Value("${EPA.Deposito.OtraCuenta}")
+    String costoOtraCuentaStr;
+
+    @Value("${EPA.Compra.Fisica}")
+
+    String costoCompraFisicaStr;
+
+    @Value("${EPA.Compra.Web}")
+    String costoCompraWebStr;
+
+    @Value("${EPA.Retiro}")
+
+    String costoRetiroStr;
 
 
     private final RabbitMqPublisher eventBus;
 
-    public ProcesarTransaccionUseCase(I_Repositorio_TransaccionMongo repositorio, I_RepositorioCuentaMongo repositorioCuenta, Environment environment, RabbitMqPublisher eventBus) {
+    public ProcesarTransaccionUseCase(I_Repositorio_TransaccionMongo repositorio,
+                                      I_RepositorioCuentaMongo repositorioCuenta,
+                                      Environment environment, RabbitMqPublisher eventBus) {
         this.repositorio = repositorio;
         this.repositorioCuenta = repositorioCuenta;
         this.environment = environment;
@@ -37,14 +58,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
     public Mono<M_Transaccion_DTO> apply(ProcesarTransaccionDto procesarTransaccionDto) {
 
 
-        String costoCajeroStr = environment.getProperty("EPA.Deposito.Cajero");
-        String costoSucursalStr = environment.getProperty("EPA.Deposito.Sucursal");
-        String costoOtraCuentaStr = environment.getProperty("EPA.Deposito.OtraCuenta");
 
-        String costoCompraFisicaStr = environment.getProperty("EPA.Compra.Fisica");
-        String costoCompraWebStr = environment.getProperty("EPA.Compra.Web");
-
-        String costoRetiroStr = environment.getProperty("EPA.Retiro");
 
         double costoCajero = Double.parseDouble(costoCajeroStr);
         double costoSucursal = Double.parseDouble(costoSucursalStr);

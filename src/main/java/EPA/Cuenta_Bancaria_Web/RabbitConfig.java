@@ -8,10 +8,10 @@ import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import reactor.rabbitmq.*;
@@ -32,12 +32,21 @@ public class RabbitConfig {
     public static final String ROUTING_KEY_NAME = "transactions.routing.key";
     public static final String ROUTING_CLOUD_WATCH_KEY_NAME = "transactions.routing.cloud_watch.key";
     public static final String ROUTING_ERROR_KEY_NAME = "transactions.routing.error.key";
-    public static final String URI_NAME = "amqp://rabbit_user:b5x26z4p@192.168.65.3:30002";
+    //public  final String URI_NAME = "amqp://rabbit_user:b5x26z4p@192.168.65.3:5672";
 
+   // private final String URI_NAME;
+
+    @Value("${rabbit.uri}")
+    public static String URI_NAME;
 
     @Bean
-    public AmqpAdmin amqpAdmin() {
-        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(URI.create(URI_NAME));
+    public static URI uri(@Value("${rabbit.uri}") String uri) {
+        URI_NAME = uri;
+        return URI.create(uri);
+    }
+    @Bean
+    public AmqpAdmin amqpAdmin(URI uri) {
+        CachingConnectionFactory connectionFactory = new CachingConnectionFactory(uri);
         var amqpAdmin =  new RabbitAdmin(connectionFactory);
 
         var exchange = new TopicExchange(EXCHANGE_NAME);
@@ -65,10 +74,10 @@ public class RabbitConfig {
 
 
     @Bean
-    public ConnectionFactory connectionFactory() throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
+    public ConnectionFactory connectionFactory(URI uri) throws NoSuchAlgorithmException, KeyManagementException, URISyntaxException {
         ConnectionFactory connectionFactory = new ConnectionFactory();
         connectionFactory.useNio();
-        connectionFactory.setUri(URI_NAME);
+        connectionFactory.setUri(uri);
         return connectionFactory;
     }
 
