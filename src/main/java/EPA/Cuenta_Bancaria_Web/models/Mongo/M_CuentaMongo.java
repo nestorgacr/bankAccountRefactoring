@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Document("M_CuentaMongo")
 public class M_CuentaMongo
@@ -46,5 +47,18 @@ public class M_CuentaMongo
 
     public void setCliente(M_ClienteMongo cliente) {
         this.cliente = cliente;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        M_CuentaMongo that = (M_CuentaMongo) o;
+        return Objects.equals(id, that.id) && Objects.equals(saldo_Global, that.saldo_Global) && Objects.equals(cliente, that.cliente);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, saldo_Global, cliente);
     }
 }

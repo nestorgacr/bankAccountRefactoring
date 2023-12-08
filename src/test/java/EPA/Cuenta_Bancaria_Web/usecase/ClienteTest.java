@@ -22,6 +22,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 
@@ -76,22 +77,24 @@ public class ClienteTest {
     }
 
 
-//    @Test
-//    @DisplayName("Usecase ->Crear cliente")
-//    public void CrearCliente() {
-//
-//
-//        M_Cliente_DTO clienteDto = new M_Cliente_DTO("1", "NombreCliente");
-//
-//
-//        when(repository.save(ClienteUtil.dtoToEntity(clienteDto)))
-//                .thenReturn(Mono.just(ClienteUtil.dtoToEntity(clienteDto)));
-//
-//
-//        StepVerifier.create(crearClienteUseCase.apply(clienteDto))
-//                .expectNextMatches(createdClient -> createdClient.getId().equals(clienteDto.getId()))
-//                .verifyComplete();
-//    }
+    @Test
+    @DisplayName("Usecase -> Crear cliente")
+    public void CrearCliente() {
+
+
+        M_Cliente_DTO clienteDto = new M_Cliente_DTO("1", "NombreCliente");
+
+
+        when(repository.save(ClienteUtil.dtoToEntity(clienteDto)))
+                .thenReturn(Mono.just(ClienteUtil.dtoToEntity(clienteDto)));
+
+        doNothing().when(rabbitMqPublisher).publishCloudWatchMessage("Inicia la creacion del cliente",clienteDto);
+
+
+        StepVerifier.create(crearClienteUseCase.apply(clienteDto))
+                .expectNext(clienteDto)
+                .verifyComplete();
+    }
 
 
 

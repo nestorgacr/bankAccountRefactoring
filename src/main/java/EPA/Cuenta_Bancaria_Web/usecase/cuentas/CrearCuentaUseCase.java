@@ -34,7 +34,7 @@ public class CrearCuentaUseCase implements Function<M_Cuenta_DTO, Mono<M_Cuenta_
 
         return repositorio_Cuenta.save(cuenta)
                 .map(cuentaModel-> {
-                    eventBus.publishCloudWatchMessage("Finaliza creación de cuenta", cuentaModel);
+                    //eventBus.publishCloudWatchMessage("Finaliza creación de cuenta", cuentaModel);
                     return new M_Cuenta_DTO(cuentaModel.getId(),
                             new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                     cuentaModel.getCliente().getNombre()),

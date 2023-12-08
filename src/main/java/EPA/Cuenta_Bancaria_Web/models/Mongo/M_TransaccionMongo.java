@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 @Document("M_TransaccionMongo")
 @Data
@@ -107,5 +108,18 @@ public class M_TransaccionMongo
 
     public void setIdProceso(String idProceso) {
         this.idProceso = idProceso;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        M_TransaccionMongo that = (M_TransaccionMongo) o;
+        return Objects.equals(id, that.id) && Objects.equals(monto_transaccion, that.monto_transaccion) && Objects.equals(saldo_inicial, that.saldo_inicial) && Objects.equals(saldo_final, that.saldo_final) && Objects.equals(costo_transaccion, that.costo_transaccion) && Objects.equals(tipo, that.tipo) && Objects.equals(idProceso, that.idProceso) && Objects.equals(cuenta, that.cuenta);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, monto_transaccion, saldo_inicial, saldo_final, costo_transaccion, tipo, idProceso, cuenta);
     }
 }
