@@ -29,6 +29,8 @@ public class ListarCuentaPorIdUseCase implements Function<String, Mono<M_Cuenta_
                 .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
                         new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                 cuentaModel.getCliente().getNombre()),
-                        cuentaModel.getSaldo_Global()));
+                        cuentaModel.getSaldo_Global())).doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza busqueda de cuenta", id);
+                });
     }
 }

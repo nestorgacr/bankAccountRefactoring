@@ -27,11 +27,11 @@ public class RabbitMqPublisher {
                         RabbitConfig.ROUTING_KEY_NAME, gson.toJson(event).getBytes()))).subscribe();
     }
 
-    public void publishErrorMessage(String message, Object object){
-        EventosDto event = new EventosDto(message, object);
+    public void publishErrorMessage(Object object){
+
         sender
                 .send(Mono.just(new OutboundMessage(RabbitConfig.EXCHANGE_NAME,
-                        RabbitConfig.ROUTING_ERROR_KEY_NAME, gson.toJson(event).getBytes()))).subscribe();
+                        RabbitConfig.ROUTING_ERROR_KEY_NAME, gson.toJson(object).getBytes()))).subscribe();
     }
 
     public void publishCloudWatchMessage(String message, Object object){

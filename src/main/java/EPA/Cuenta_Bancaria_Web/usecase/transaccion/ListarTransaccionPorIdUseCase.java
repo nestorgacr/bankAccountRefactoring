@@ -25,6 +25,9 @@ public class ListarTransaccionPorIdUseCase implements Function<String, Mono<Tran
 
     @Override
     public Mono<TransaccionResponseDto> apply(String id) {
-        return repositorio.findById(id).map(TransaccionUtil::entityToDto);
+        eventBus.publishCloudWatchMessage("Inicia busca transaccion", id);
+        return repositorio.findById(id).map(TransaccionUtil::entityToDto).doOnTerminate(() -> {
+            eventBus.publishCloudWatchMessage("Finaliza busca transaccion", id);
+        });
     }
 }

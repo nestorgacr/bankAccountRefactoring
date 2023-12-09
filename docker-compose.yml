@@ -1,14 +1,18 @@
 version: '3'
 
 services:
-#  java_app:
-#    build: .
-#    container_name: java_container_bank
-#    ports:
-#      - "8086:8086"
-#    working_dir: /app
-#    networks:
-#      - bankNet
+  java_app:
+    image: nestorgacr/bank_account_app:dk
+    container_name: java_container_bank
+    ports:
+      - "8086:8086"
+    working_dir: /app
+    networks:
+      - bankNet
+    depends_on:
+      - rabbitmq
+      - mongodb
+
   java_service:
     image: nestorgacr/bank_account_service:latest
     environment:
@@ -20,6 +24,9 @@ services:
     working_dir: /app
     networks:
       - bankNet
+    depends_on:
+      - rabbitmq
+      - mongodb
 
   mongodb:
     image: mongo:7.0.4

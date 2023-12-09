@@ -39,6 +39,8 @@ public class CrearCuentaUseCase implements Function<M_Cuenta_DTO, Mono<M_Cuenta_
                             new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                     cuentaModel.getCliente().getNombre()),
                             cuentaModel.getSaldo_Global());
+                }).doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza creacion de cuenta", p_Cuenta_DTO);
                 });
     }
 }

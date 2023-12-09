@@ -26,6 +26,8 @@ public class ListarClientesUseCase implements Supplier<Flux<M_Cliente_DTO>> {
     public Flux<M_Cliente_DTO> get() {
         eventBus.publishCloudWatchMessage("Inicia creación de findAll clientes", "");
         return repositorio.findAll()
-                .map(ClienteUtil::entityToDto);
+                .map(ClienteUtil::entityToDto).doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza la busqueda de clientes", "");
+                });
     }
 }

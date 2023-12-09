@@ -31,6 +31,8 @@ public class ListarCuentasUseCase implements Supplier<Flux<M_Cuenta_DTO>> {
                 .map(cuentaModel -> new M_Cuenta_DTO(cuentaModel.getId(),
                         new M_Cliente_DTO(cuentaModel.getCliente().getId(),
                                 cuentaModel.getCliente().getNombre()),
-                        cuentaModel.getSaldo_Global()));
+                        cuentaModel.getSaldo_Global())).doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza buscar de cuentas", "");
+                });
     }
 }

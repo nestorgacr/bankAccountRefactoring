@@ -22,6 +22,8 @@ public class BorrarTransaccionPorIdProcesoUseCase implements Function<String, Mo
 
     @Override
     public Mono<Void> apply(String idProceso) {
-        return repositorio.deleteByIdProceso(idProceso);
+        return repositorio.deleteByIdProceso(idProceso).doOnTerminate(() -> {
+            eventBus.publishCloudWatchMessage("Finaliza el borrado de la transaccion", idProceso);
+        });
     }
 }

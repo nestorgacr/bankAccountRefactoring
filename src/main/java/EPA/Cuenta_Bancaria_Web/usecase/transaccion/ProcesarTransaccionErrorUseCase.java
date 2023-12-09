@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 
 @Service
-public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionDto, Mono<M_Transaccion_DTO>> {
+public class ProcesarTransaccionErrorUseCase implements Function<ProcesarTransaccionDto, Mono<M_Transaccion_DTO>> {
 
     private final I_RepositorioTransaccionMongo repositorio;
     private final I_RepositorioCuentaMongo repositorioCuenta;
@@ -45,9 +45,9 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
 
     private final RabbitMqPublisher eventBus;
 
-    public ProcesarTransaccionUseCase(I_RepositorioTransaccionMongo repositorio,
-                                      I_RepositorioCuentaMongo repositorioCuenta,
-                                      Environment environment, RabbitMqPublisher eventBus) {
+    public ProcesarTransaccionErrorUseCase(I_RepositorioTransaccionMongo repositorio,
+                                           I_RepositorioCuentaMongo repositorioCuenta,
+                                           Environment environment, RabbitMqPublisher eventBus) {
         this.repositorio = repositorio;
         this.repositorioCuenta = repositorioCuenta;
         this.environment = environment;
@@ -115,17 +115,10 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
                     );
                     transaccion.setIdProceso(uuid.toString());
                     repositorioCuenta.save(cuenta)
-                            //.flatMap(cuentaCreada -> Mono.error(new RuntimeException("Mensaje de pueba")))
+                            .flatMap(cuentaCreada -> Mono.error(new RuntimeException("Error automatico de prueba")))
                             .onErrorResume(error -> {
                                 System.out.println("El error fue: " + error.getMessage());
-                                /**
-                                 * Crear objeto de resiliencia que contenga la cuenta y la
-                                 * transacción para enviar a una nueva cola de Rabbit con un
-                                 * nuevo routing key.
-                                 *
-                                 * Crear un handler que consuma esa cola y borrar los registros ya guardados
-                                 * */
-                                //BigDecimal monto_transaccion, BigDecimal saldo_inicial, BigDecimal saldo_final, BigDecimal costo_tansaccion, String tipo, String idProceso
+
                                 M_Transaccion_DTO mTran = new M_Transaccion_DTO(
                                         transaccion.getId(),
                                         new M_Cuenta_DTO(transaccion.getCuenta().getId(),null, null),
@@ -139,7 +132,7 @@ public class ProcesarTransaccionUseCase implements Function<ProcesarTransaccionD
                                 errorSend.setTransaccion(mTran);
 
                                 eventBus.publishErrorMessage(errorSend);
-
+                                eventBus.publishMessage("Error al procesar transaccion:"+error.getMessage(),"");
 
                                 return Mono.empty();
                             })

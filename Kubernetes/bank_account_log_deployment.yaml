@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bank-acount-log
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      role: bank-acount-log
+  template:
+    metadata:
+      labels:
+        role: bank-acount-log
+    spec:
+      containers:
+        - name: bank-acount-log
+          image: nestorgacr/bank_account_service:kb
+          ports:
+            - containerPort: 8087
+          env:
+            - name: RABBIT_URI
+              value: "amqp://rabbit_user:b5x26z4p@192.168.65.3:30002"
+            - name: MONGO_URI
+              value: "mongodb://192.168.65.3:30001/"

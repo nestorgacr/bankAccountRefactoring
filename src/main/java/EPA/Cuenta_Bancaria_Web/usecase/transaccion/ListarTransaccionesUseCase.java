@@ -44,6 +44,8 @@ public class ListarTransaccionesUseCase implements Supplier<Flux<M_Transaccion_D
                             transaccion.getTipo(),
                             transaccion.getIdProceso()
                     );
+                }).doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza bsucar todas las transacciones", "");
                 });
     }
 }

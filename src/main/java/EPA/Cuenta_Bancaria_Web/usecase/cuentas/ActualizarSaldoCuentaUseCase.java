@@ -32,6 +32,8 @@ public class ActualizarSaldoCuentaUseCase implements Function<ActualizarSaldoDto
                     cuenta.setSaldo_Global(actualizarSaldoDto.getMonto());
                     return repositorio_Cuenta.save(cuenta);
                 })
-                .then();
+                .then().doOnTerminate(() -> {
+                    eventBus.publishCloudWatchMessage("Finaliza actualizacion de cuenta", actualizarSaldoDto);
+                });
     }
 }

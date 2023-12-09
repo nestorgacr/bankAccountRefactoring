@@ -28,6 +28,8 @@ public class CrearClienteUseCase implements Function<M_Cliente_DTO, Mono<M_Clien
     public Mono<M_Cliente_DTO> apply(M_Cliente_DTO mClienteDto) {
         eventBus.publishCloudWatchMessage("Inicia la creacion del cliente", mClienteDto);
         M_ClienteMongo cliente = ClienteUtil.dtoToEntity(mClienteDto);
-        return repositorio.save(cliente).map(ClienteUtil::entityToDto);
+        return repositorio.save(cliente).map(ClienteUtil::entityToDto).doOnTerminate(() -> {
+            eventBus.publishCloudWatchMessage("Finaliza la creacion del cliente", mClienteDto);
+        });
     }
 }

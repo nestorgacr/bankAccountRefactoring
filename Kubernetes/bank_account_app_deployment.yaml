@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: bank-acount-api
-        image: nestorgacr/bank_account_app:1.0.3
+        image: nestorgacr/bank_account_app:kb
         ports:
           - containerPort: 8086
